@@ -23,7 +23,10 @@ quantity_entry = tk.Entry(window)
 # Create a button to submit the customer information
 submit_button = tk.Button(window, text="Submit", command=lambda: submit_info())
 
-# Add the labels and entry fields to the GUI window
+# Create a text widget to display errors
+error_text = tk.Text(window, height=5)
+
+# Add the labels, entry fields, submit button, and error box to the GUI window
 name_label.pack()
 name_entry.pack()
 receipt_label.pack()
@@ -33,6 +36,7 @@ items_entry.pack()
 quantity_label.pack()
 quantity_entry.pack()
 submit_button.pack()
+error_text.pack()
 
 # Function to handle the submission of the customer information
 def submit_info():
@@ -42,28 +46,39 @@ def submit_info():
     items = items_entry.get()
     quantity = quantity_entry.get()
 
+    # Clear the error box
+    error_text.delete('1.0', tk.END)
+
     # Check if the receipt number is within the limit
     if int(receipt) < MIN_NUMBER or int(receipt) > MAX_NUMBER:
-        # Display error message in a pop-up window
-        error_window = tk.Toplevel(window)
-        error_window.title("Error")
-        error_window.geometry("200x100")
-        error_label = tk.Label(error_window, text="Invalid number.\nPlease select a number between 1-500")
-        error_label.pack(pady=10)
-        ok_button = tk.Button(error_window, text="OK", command=error_window.destroy)
-        ok_button.pack(pady=10)
+        # Display error message in the error box
+        error_text.insert(tk.END, "Invalid number.\nPlease select a number between 1-500\n")
         # Clear the receipt number entry field
         receipt_entry.delete(0, tk.END)
         return
 
-    
-    
+    # Check if the name contains only letters
+    if not name.isalpha():
+        # Display error message in the error box
+        error_text.insert(tk.END, "Invalid name.\n")
+        # Clear the name entry field
+        name_entry.delete(0, tk.END)
+        return
+
+    # Check if the quantity is within the limit
+    if not quantity.isdigit() or int(quantity) < MIN_NUMBER or int(quantity) > MAX_NUMBER:
+        # Display error message in the error box
+        error_text.insert(tk.END, f"Invalid Quantity.\nPlease enter a number between {MIN_NUMBER}-{MAX_NUMBER}.\n")
+        # Clear the quantity entry field
+        quantity_entry.delete(0, tk.END)
+        return
+
     # Print the customer information to the console
     print("Customer Name: " + name)
     print("Receipt Number: " + receipt)
     print("Items Hired: " + items)
     print("Quantity: " + quantity)
-    
+
     # Clear the entry fields after submission
     name_entry.delete(0, tk.END)
     receipt_entry.delete(0, tk.END)
