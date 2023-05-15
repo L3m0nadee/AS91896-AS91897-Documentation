@@ -8,7 +8,7 @@ window.geometry("1024x600")
 MAX_NUMBER = 500
 MIN_NUMBER = 1
 
-# Create the labels for the input fields
+# Labels for the input fields
 name_label = tk.Label(window, text="Full Name:")
 receipt_label = tk.Label(window, text="Receipt Number:")
 items_label = tk.Label(window, text="Items Hired:")
