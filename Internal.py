@@ -8,7 +8,7 @@ window.geometry("1024x600")
 MAX_NUMBER = 500
 MIN_NUMBER = 1
 
-# Create the labels for the input fields
+# Labels for the input fields
 name_label = tk.Label(window, text="Full Name:")
 receipt_label = tk.Label(window, text="Receipt Number:")
 items_label = tk.Label(window, text="Items Hired:")
@@ -40,7 +40,7 @@ error_text.pack()
 
 # Function to handle the submission of the customer information
 def submit_info():
-    # Get the input data from the entry fields
+    # Input Fields of data
     name = name_entry.get()
     receipt = receipt_entry.get()
     items = items_entry.get()
@@ -48,14 +48,6 @@ def submit_info():
 
     # Clear the error box
     error_text.delete('1.0', tk.END)
-
-    # Check if the receipt number is within the limit
-    if int(receipt) < MIN_NUMBER or int(receipt) > MAX_NUMBER:
-        # Display error message in the error box
-        error_text.insert(tk.END, "Invalid number.\nPlease select a number between 1-500\n")
-        # Clear the receipt number entry field
-        receipt_entry.delete(0, tk.END)
-        return
 
     # Check if the name contains only letters
     if not name.isalpha():
