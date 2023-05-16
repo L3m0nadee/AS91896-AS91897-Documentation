@@ -49,13 +49,8 @@ def submit_info():
     # Clear the error box
     error_text.delete('1.0', tk.END)
 
-<<<<<<< HEAD
     # Check if the name contains only letters and spaces
     if not all(char.isalpha() or char.isspace() for char in name):
-=======
-    # Check if the name contains only letters
-    if not name.isalpha():
->>>>>>> 6fdbba7e0ca20dc5d7992aa804e3aa0ec5eded76
         # Display error message in the error box
         error_text.insert(tk.END, "Invalid name.\n")
         # Clear the name entry field
