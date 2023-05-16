@@ -48,6 +48,12 @@ def submit_info():
 
     # Clear the error box
     error_text.delete('1.0', tk.END)
+    
+    # Check if any input field is empty
+    if not name or not receipt or not items or not quantity:
+        # Display error message in the error box
+        error_text.insert(tk.END, "Please fill in all the input boxes.\n")
+        return
 
     # Check if the name contains only letters and spaces
     if not all(char.isalpha() or char.isspace() for char in name):
@@ -63,6 +69,14 @@ def submit_info():
         error_text.insert(tk.END, "Invalid receipt number.\n")
         # Clear the receipt entry field
         receipt_entry.delete(0, tk.END)
+        return
+    
+    # Check if the items hired contain only letters
+    if not items.isalpha():
+        # Display error message in the error box
+        error_text.insert(tk.END, "Invalid items hired.\nLetters only.\n")
+        # Clear the items entry field
+        items_entry.delete(0, tk.END)
         return
 
     # Check if the quantity is within the limit
