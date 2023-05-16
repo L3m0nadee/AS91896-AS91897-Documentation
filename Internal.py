@@ -49,12 +49,20 @@ def submit_info():
     # Clear the error box
     error_text.delete('1.0', tk.END)
 
-    # Check if the name contains only letters
-    if not name.isalpha():
+    # Check if the name contains only letters and spaces
+    if not all(char.isalpha() or char.isspace() for char in name):
         # Display error message in the error box
         error_text.insert(tk.END, "Invalid name.\n")
         # Clear the name entry field
         name_entry.delete(0, tk.END)
+        return
+
+    # Check if the receipt number contains only numbers
+    if not receipt.isdigit():
+        # Display error message in the error box
+        error_text.insert(tk.END, "Invalid receipt number.\n")
+        # Clear the receipt entry field
+        receipt_entry.delete(0, tk.END)
         return
 
     # Check if the quantity is within the limit
