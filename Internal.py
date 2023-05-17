@@ -2,62 +2,123 @@ import tkinter as tk
 from tkinter import ttk
 from datetime import datetime
 
-# Create the GUI window
+# Constants
+MAX_NUMBER = 500
+MIN_NUMBER = 1
+
+#Function that makes the submission true 
+def submit_info():
+    name = name_entry.get()
+    receipt = receipt_entry.get()
+    items = items_entry.get()
+    quantity = quantity_entry.get()
+
+    #Function for Error box 
+    error_text.configure(state="normal")
+    error_text.delete("1.0", tk.END)
+    error_text.configure(state="disabled")
+
+    # If statements for error messages 
+    if not name or not receipt or not items or not quantity:
+        error_text.configure(state="normal")
+        error_text.insert(tk.END, "Please fill in all the input boxes.\n")
+        error_text.configure(state="disabled")
+        return
+
+    if not all(char.isalpha() or char.isspace() for char in name):
+        error_text.configure(state="normal")
+        error_text.insert(tk.END, "Invalid name.\n")
+        error_text.configure(state="disabled")
+        name_entry.delete(0, tk.END)
+        return
+
+    if not receipt.isdigit():
+        error_text.configure(state="normal")
+        error_text.insert(tk.END, "Invalid receipt number.\n")
+        error_text.configure(state="disabled")
+        receipt_entry.delete(0, tk.END)
+        return
+
+    if not items.isalpha():
+        error_text.configure(state="normal")
+        error_text.insert(tk.END, "Invalid items hired.\nLetters only.\n")
+        error_text.configure(state="disabled")
+        items_entry.delete(0, tk.END)
+        return
+
+    if not quantity.isdigit() or int(quantity) < MIN_NUMBER or int(quantity) > MAX_NUMBER:
+        error_text.configure(state="normal")
+        error_text.insert(
+            tk.END, f"Invalid Quantity.\nPlease enter a number between {MIN_NUMBER}-{MAX_NUMBER}.\n"
+        )
+        error_text.configure(state="disabled")
+        quantity_entry.delete(0, tk.END)
+        return
+
+    # Shows current time in Treeview
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    tree.insert("", tk.END, values=(name, receipt, items, quantity, current_time))
+
+    # Clears Entry fields when submitted
+    name_entry.delete(0, tk.END)
+    receipt_entry.delete(0, tk.END)
+    items_entry.delete(0, tk.END)
+    quantity_entry.delete(0, tk.END)
+
+# Function for deleting information
+def delete_info():
+    selected_item = tree.selection()
+    if not selected_item:
+        error_text.configure(state="normal")
+        error_text.delete("1.0", tk.END)
+        error_text.insert(tk.END, "No item selected.\n")
+        error_text.configure(state="disabled")
+        return
+    tree.delete(selected_item)
+
+# Creates the GUI window
 window = tk.Tk()
 window.title("Julies Party Hiring Store")
 window.geometry("1024x600")
 
-MAX_NUMBER = 500
-MIN_NUMBER = 1
-
-# Labels for the input fields
+# Labels
 name_label = ttk.Label(window, text="Full Name:")
 receipt_label = ttk.Label(window, text="Receipt Number:")
 items_label = ttk.Label(window, text="Items Hired:")
 quantity_label = ttk.Label(window, text="Quantity:")
 
-# Create the entry fields for the input data
+# Entries
 name_entry = ttk.Entry(window)
 receipt_entry = ttk.Entry(window)
 items_entry = ttk.Entry(window)
 quantity_entry = ttk.Entry(window)
 
-# Create a button to submit the customer information
-submit_button = ttk.Button(window, text="Submit", command=lambda: submit_info())
+#Submit and Delete button
+submit_button = ttk.Button(window, text="Submit", command=submit_info)
+delete_button = ttk.Button(window, text="Delete", command=delete_info)
 
-# Create a button to delete selected information
-delete_button = ttk.Button(window, text="Delete", command=lambda: delete_info())
-
-# Create a text widget to display errors
+# Error Box
 error_text = tk.Text(window, height=5)
-error_text.configure(state="disabled")  # Set the state to disabled
+error_text.configure(state="disabled")
 
-# Create a Treeview widget
+#Tree view
 tree = ttk.Treeview(window)
-
-# Define the columns for the Treeview
 tree["columns"] = ("Name", "Receipt", "Items", "Quantity", "Time")
-
-# Format the columns
 tree.column("#0", width=0, stretch=tk.NO)
 tree.column("Name", width=150)
 tree.column("Receipt", width=100)
 tree.column("Items", width=150)
 tree.column("Quantity", width=100)
 tree.column("Time", width=150)
-
-# Add column headings
 tree.heading("#0", text="", anchor=tk.W)
 tree.heading("Name", text="Full Name", anchor=tk.W)
 tree.heading("Receipt", text="Receipt Number", anchor=tk.W)
 tree.heading("Items", text="Items Hired", anchor=tk.W)
 tree.heading("Quantity", text="Quantity", anchor=tk.W)
 tree.heading("Time", text="Time", anchor=tk.W)
-
-# Pack the Treeview widget
 tree.pack()
 
-# Add the labels, entry fields, submit button, delete button, and error box to the GUI window
+# Labels, Entries, Submit and Delete button for GUI
 name_label.pack(padx=10, pady=5)
 name_entry.pack(padx=10, pady=5)
 receipt_label.pack(padx=10, pady=5)
@@ -70,91 +131,5 @@ submit_button.pack(pady=10)
 delete_button.pack(pady=5)
 error_text.pack()
 
-# Function to handle the submission of the customer information
-def submit_info():
-    # Input Fields of data
-    name = name_entry.get()
-    receipt = receipt_entry.get()
-    items = items_entry.get()
-    quantity = quantity_entry.get()
-
-    # Clear the error box
-    error_text.configure(state="normal")  # Set the state to normal
-    error_text.delete("1.0", tk.END)
-    error_text.configure(state="disabled")  # Set the state back to disabled
-
-    # Check if any input field is empty
-    if not name or not receipt or not items or not quantity:
-        # Display error message in the error box
-        error_text.configure(state="normal")  # Set the state to normal
-        error_text.insert(tk.END, "Please fill in all the input boxes.\n")
-        error_text.configure(state="disabled")  # Set the state back to disabled
-        return
-
-    # Check if the name contains only letters and spaces
-    if not all(char.isalpha() or char.isspace() for char in name):
-        # Display error message in the error box
-        error_text.configure(state="normal")  # Set the state to normal
-        error_text.insert(tk.END, "Invalid name.\n")
-        error_text.configure(state="disabled")  # Set the state back to disabled
-        # Clear the name entry field
-        name_entry.delete(0, tk.END)
-        return
-
-    # Check if the receipt number contains only numbers
-    if not receipt.isdigit():
-        # Display error message in the error box
-        error_text.configure(state="normal")  # Set the state to normal
-        error_text.insert(tk.END, "Invalid receipt number.\n")
-        error_text.configure(state="disabled")  # Set the state back to disabled
-        # Clear the receipt entry field
-        receipt_entry.delete(0, tk.END)
-        return
-
-    # Check if the items hired contain only letters
-    if not items.isalpha():
-        # Display error message in the error box
-        error_text.configure(state="normal")  # Set the state to normal
-        error_text.insert(tk.END, "Invalid items hired.\nLetters only.\n")
-        error_text.configure(state="disabled")  # Set the state back to disabled
-        # Clear the items entry field
-        items_entry.delete(0, tk.END)
-        return
-
-    # Check if the quantity is within the limit
-    if not quantity.isdigit() or int(quantity) < MIN_NUMBER or int(quantity) > MAX_NUMBER:
-        # Display error message in the error box
-        error_text.configure(state="normal")  # Set the state to normal
-        error_text.insert(
-            tk.END, f"Invalid Quantity.\nPlease enter a number between {MIN_NUMBER}-{MAX_NUMBER}.\n"
-        )
-        error_text.configure(state="disabled")  # Set the state back to disabled
-        # Clear the quantity entry field
-        quantity_entry.delete(0, tk.END)
-        return
-
-    # Get the current time
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    # Insert the data into the Treeview
-    tree.insert("", tk.END, values=(name, receipt, items, quantity, current_time))
-
-    # Clear the entry fields after submission
-    name_entry.delete(0, tk.END)
-    receipt_entry.delete(0, tk.END)
-    items_entry.delete(0, tk.END)
-    quantity_entry.delete(0, tk.END)
-
-# Function to handle the deletion of selected information
-def delete_info():
-    selected_item = tree.selection()
-    if not selected_item:
-        error_text.configure(state="normal")  # Set the state to normal
-        error_text.delete("1.0", tk.END)
-        error_text.insert(tk.END, "No item selected.\n")
-        error_text.configure(state="disabled")  # Set the state back to disabled
-        return
-    tree.delete(selected_item)
-
-# Run the GUI window
+# Runs the GUI
 window.mainloop()
