@@ -11,19 +11,22 @@ MAX_NUMBER = 500
 MIN_NUMBER = 1
 
 # Labels for the input fields
-name_label = tk.Label(window, text="Full Name:")
-receipt_label = tk.Label(window, text="Receipt Number:")
-items_label = tk.Label(window, text="Items Hired:")
-quantity_label = tk.Label(window, text="Quantity:")
+name_label = ttk.Label(window, text="Full Name:")
+receipt_label = ttk.Label(window, text="Receipt Number:")
+items_label = ttk.Label(window, text="Items Hired:")
+quantity_label = ttk.Label(window, text="Quantity:")
 
 # Create the entry fields for the input data
-name_entry = tk.Entry(window)
-receipt_entry = tk.Entry(window)
-items_entry = tk.Entry(window)
-quantity_entry = tk.Entry(window)
+name_entry = ttk.Entry(window)
+receipt_entry = ttk.Entry(window)
+items_entry = ttk.Entry(window)
+quantity_entry = ttk.Entry(window)
 
 # Create a button to submit the customer information
-submit_button = tk.Button(window, text="Submit", command=lambda: submit_info())
+submit_button = ttk.Button(window, text="Submit", command=lambda: submit_info())
+
+# Create a button to delete selected information
+delete_button = ttk.Button(window, text="Delete", command=lambda: delete_info())
 
 # Create a text widget to display errors
 error_text = tk.Text(window, height=5)
@@ -53,7 +56,7 @@ tree.heading("Time", text="Time", anchor=tk.W)
 # Pack the Treeview widget
 tree.pack()
 
-# Add the labels, entry fields, submit button, and error box to the GUI window
+# Add the labels, entry fields, submit button, delete button, and error box to the GUI window
 name_label.pack(padx=10, pady=5)
 name_entry.pack(padx=10, pady=5)
 receipt_label.pack(padx=10, pady=5)
@@ -63,6 +66,7 @@ items_entry.pack(padx=10, pady=5)
 quantity_label.pack(padx=10, pady=5)
 quantity_entry.pack(padx=10, pady=5)
 submit_button.pack(pady=10)
+delete_button.pack(pady=5)
 error_text.pack()
 
 # Function to handle the submission of the customer information
@@ -125,6 +129,15 @@ def submit_info():
     receipt_entry.delete(0, tk.END)
     items_entry.delete(0, tk.END)
     quantity_entry.delete(0, tk.END)
+
+# Function to handle the deletion of selected information
+def delete_info():
+    selected_item = tree.selection()
+    if not selected_item:
+        error_text.delete('1.0', tk.END)
+        error_text.insert(tk.END, "No item selected.\n")
+        return
+    tree.delete(selected_item)
 
 # Run the GUI window
 window.mainloop()
