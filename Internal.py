@@ -30,6 +30,7 @@ delete_button = ttk.Button(window, text="Delete", command=lambda: delete_info())
 
 # Create a text widget to display errors
 error_text = tk.Text(window, height=5)
+error_text.configure(state="disabled")  # Set the state to disabled
 
 # Create a Treeview widget
 tree = ttk.Treeview(window)
@@ -78,18 +79,24 @@ def submit_info():
     quantity = quantity_entry.get()
 
     # Clear the error box
-    error_text.delete('1.0', tk.END)
-    
+    error_text.configure(state="normal")  # Set the state to normal
+    error_text.delete("1.0", tk.END)
+    error_text.configure(state="disabled")  # Set the state back to disabled
+
     # Check if any input field is empty
     if not name or not receipt or not items or not quantity:
         # Display error message in the error box
+        error_text.configure(state="normal")  # Set the state to normal
         error_text.insert(tk.END, "Please fill in all the input boxes.\n")
+        error_text.configure(state="disabled")  # Set the state back to disabled
         return
 
     # Check if the name contains only letters and spaces
     if not all(char.isalpha() or char.isspace() for char in name):
         # Display error message in the error box
+        error_text.configure(state="normal")  # Set the state to normal
         error_text.insert(tk.END, "Invalid name.\n")
+        error_text.configure(state="disabled")  # Set the state back to disabled
         # Clear the name entry field
         name_entry.delete(0, tk.END)
         return
@@ -97,15 +104,19 @@ def submit_info():
     # Check if the receipt number contains only numbers
     if not receipt.isdigit():
         # Display error message in the error box
+        error_text.configure(state="normal")  # Set the state to normal
         error_text.insert(tk.END, "Invalid receipt number.\n")
+        error_text.configure(state="disabled")  # Set the state back to disabled
         # Clear the receipt entry field
         receipt_entry.delete(0, tk.END)
         return
-    
+
     # Check if the items hired contain only letters
     if not items.isalpha():
         # Display error message in the error box
+        error_text.configure(state="normal")  # Set the state to normal
         error_text.insert(tk.END, "Invalid items hired.\nLetters only.\n")
+        error_text.configure(state="disabled")  # Set the state back to disabled
         # Clear the items entry field
         items_entry.delete(0, tk.END)
         return
@@ -113,7 +124,11 @@ def submit_info():
     # Check if the quantity is within the limit
     if not quantity.isdigit() or int(quantity) < MIN_NUMBER or int(quantity) > MAX_NUMBER:
         # Display error message in the error box
-        error_text.insert(tk.END, f"Invalid Quantity.\nPlease enter a number between {MIN_NUMBER}-{MAX_NUMBER}.\n")
+        error_text.configure(state="normal")  # Set the state to normal
+        error_text.insert(
+            tk.END, f"Invalid Quantity.\nPlease enter a number between {MIN_NUMBER}-{MAX_NUMBER}.\n"
+        )
+        error_text.configure(state="disabled")  # Set the state back to disabled
         # Clear the quantity entry field
         quantity_entry.delete(0, tk.END)
         return
@@ -134,8 +149,10 @@ def submit_info():
 def delete_info():
     selected_item = tree.selection()
     if not selected_item:
-        error_text.delete('1.0', tk.END)
+        error_text.configure(state="normal")  # Set the state to normal
+        error_text.delete("1.0", tk.END)
         error_text.insert(tk.END, "No item selected.\n")
+        error_text.configure(state="disabled")  # Set the state back to disabled
         return
     tree.delete(selected_item)
 
