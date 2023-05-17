@@ -39,7 +39,7 @@ def submit_info():
         receipt_entry.delete(0, tk.END)
         return
 
-    if not items.isalpha():
+    if not all(char.isalpha() or char.isspace() for char in name):
         error_text.configure(state="normal")
         error_text.insert(tk.END, "Invalid items hired.\nLetters only.\n")
         error_text.configure(state="disabled")
