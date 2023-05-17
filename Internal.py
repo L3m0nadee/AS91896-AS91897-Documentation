@@ -1,4 +1,6 @@
 import tkinter as tk
+from tkinter import ttk
+from datetime import datetime
 
 # Create the GUI window
 window = tk.Tk()
@@ -25,6 +27,31 @@ submit_button = tk.Button(window, text="Submit", command=lambda: submit_info())
 
 # Create a text widget to display errors
 error_text = tk.Text(window, height=5)
+
+# Create a Treeview widget
+tree = ttk.Treeview(window)
+
+# Define the columns for the Treeview
+tree["columns"] = ("Name", "Receipt", "Items", "Quantity", "Time")
+
+# Format the columns
+tree.column("#0", width=0, stretch=tk.NO)
+tree.column("Name", width=150)
+tree.column("Receipt", width=100)
+tree.column("Items", width=150)
+tree.column("Quantity", width=100)
+tree.column("Time", width=150)
+
+# Add column headings
+tree.heading("#0", text="", anchor=tk.W)
+tree.heading("Name", text="Full Name", anchor=tk.W)
+tree.heading("Receipt", text="Receipt Number", anchor=tk.W)
+tree.heading("Items", text="Items Hired", anchor=tk.W)
+tree.heading("Quantity", text="Quantity", anchor=tk.W)
+tree.heading("Time", text="Time", anchor=tk.W)
+
+# Pack the Treeview widget
+tree.pack()
 
 # Add the labels, entry fields, submit button, and error box to the GUI window
 name_label.pack()
@@ -87,11 +114,11 @@ def submit_info():
         quantity_entry.delete(0, tk.END)
         return
 
-    # Print the customer information to the console
-    print("Customer Name: " + name)
-    print("Receipt Number: " + receipt)
-    print("Items Hired: " + items)
-    print("Quantity: " + quantity)
+    # Get the current time
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    # Insert the data into the Treeview
+    tree.insert("", tk.END, values=(name, receipt, items, quantity, current_time))
 
     # Clear the entry fields after submission
     name_entry.delete(0, tk.END)
