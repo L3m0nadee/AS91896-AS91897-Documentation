@@ -13,17 +13,36 @@ def submit_info():
     items = items_entry.get()
     quantity = quantity_entry.get()
 
-    #Function for Error box 
+    # Function for Error box
     error_text.configure(state="normal")
     error_text.delete("1.0", tk.END)
     error_text.configure(state="disabled")
 
-    # If statements for error messages 
-    if not name or not receipt or not items or not quantity:
+    # If statements for error messages
+    if not name:
         error_text.configure(state="normal")
-        error_text.insert(tk.END, "Please fill in all the input boxes.\n")
+        error_text.insert(tk.END, "Please fill in the Customer Full Name.\n")
         error_text.configure(state="disabled")
         return
+    
+    if not receipt:
+        error_text.configure(state="normal")
+        error_text.insert(tk.END, "Please fill in the Receipt Number.\n")
+        error_text.configure(state="disabled")
+        return
+    
+    if not items:
+        error_text.configure(state="normal")
+        error_text.insert(tk.END, "Please fill in the Items Hired.\n")
+        error_text.configure(state="disabled")
+        return
+    
+    if not quantity:
+        error_text.configure(state="normal")
+        error_text.insert(tk.END, "Please fill in the Quantity of Items hired.\n")
+        error_text.configure(state="disabled")
+        return
+
 
     if not all(char.isalpha() or char.isspace() for char in name):
         error_text.configure(state="normal")
@@ -34,7 +53,7 @@ def submit_info():
 
     if not receipt.isdigit():
         error_text.configure(state="normal")
-        error_text.insert(tk.END, "Invalid receipt number.\n")
+        error_text.insert(tk.END, "Invalid receipt number. Digits only\n")
         error_text.configure(state="disabled")
         receipt_entry.delete(0, tk.END)
         return
@@ -65,6 +84,7 @@ def submit_info():
     items_entry.delete(0, tk.END)
     quantity_entry.delete(0, tk.END)
 
+
 # Function for deleting information
 def delete_info():
     selected_item = tree.selection()
@@ -85,7 +105,7 @@ window.geometry("1024x600")
 name_label = ttk.Label(window, text="Full Name:")
 receipt_label = ttk.Label(window, text="Receipt Number:")
 items_label = ttk.Label(window, text="Items Hired:")
-quantity_label = ttk.Label(window, text="Quantity:")
+quantity_label = ttk.Label(window, text="Quantity of Items hired:")
 
 # Entries
 name_entry = ttk.Entry(window)
@@ -114,7 +134,7 @@ tree.heading("#0", text="", anchor=tk.W)
 tree.heading("Name", text="Full Name", anchor=tk.W)
 tree.heading("Receipt", text="Receipt Number", anchor=tk.W)
 tree.heading("Items", text="Items Hired", anchor=tk.W)
-tree.heading("Quantity", text="Quantity", anchor=tk.W)
+tree.heading("Quantity", text="Quantity of Items hired", anchor=tk.W)
 tree.heading("Time", text="Time", anchor=tk.W)
 tree.pack()
 
