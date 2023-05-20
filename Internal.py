@@ -6,7 +6,7 @@ from datetime import datetime
 MAX_NUMBER = 500
 MIN_NUMBER = 1
 
-#Function that makes the submission true 
+# Function that makes the submission true 
 def submit_info():
     name = name_entry.get()
     receipt = receipt_entry.get()
@@ -76,7 +76,8 @@ def submit_info():
 
     # Shows current time in Treeview
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    tree.insert("", tk.END, values=(name, receipt, items, quantity, current_time))
+    index = len(tree.get_children()) + 1  # Get the next index value
+    tree.insert("", tk.END, values=(index, name, receipt, items, quantity, current_time))
 
     # Clears Entry fields when submitted
     name_entry.delete(0, tk.END)
@@ -107,6 +108,10 @@ style.configure("TLabel", font=("Helvetica", 12))
 style.configure("TButton", font=("Helvetica", 12))
 style.configure("Treeview", font=("Helvetica", 12))
 
+# Title label
+title_label = ttk.Label(window, text="List of Items Hired", font=("Helvetica", 16, "bold"))
+title_label.pack(pady=10)
+
 # Labels
 name_label = ttk.Label(window, text="Full Name:")
 receipt_label = ttk.Label(window, text="Receipt Number:")
@@ -129,13 +134,15 @@ error_text.configure(state="disabled")
 
 # Tree view
 tree = ttk.Treeview(window, show="headings", selectmode="browse")
-tree["columns"] = ("Name", "Receipt", "Items", "Quantity", "Time")
+tree["columns"] = ("Column", "Name", "Receipt", "Items", "Quantity", "Time")
 tree.column("#0", width=0, stretch=tk.NO)
+tree.column("Column", width=100)
 tree.column("Name", width=200)
 tree.column("Receipt", width=150)
 tree.column("Items", width=200)
 tree.column("Quantity", width=150)
 tree.column("Time", width=200)
+tree.heading("Column", anchor=tk.CENTER)
 tree.heading("Name", text="Full Name", anchor=tk.CENTER)
 tree.heading("Receipt", text="Receipt Number", anchor=tk.CENTER)
 tree.heading("Items", text="Items Hired", anchor=tk.CENTER)
