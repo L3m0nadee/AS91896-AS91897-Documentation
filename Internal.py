@@ -92,7 +92,7 @@ def delete_info():
     if not selected_item:
         error_text.configure(state="normal")
         error_text.delete("1.0", tk.END)
-        error_text.insert(tk.END, "No item selected.\n")
+        error_text.insert(tk.END, "Select the item returned.\n")
         error_text.configure(state="disabled")
         return
     tree.delete(selected_item)
@@ -126,7 +126,7 @@ quantity_entry = ttk.Entry(window, font=("Helvetica", 12))
 
 # Submit and Delete button
 submit_button = ttk.Button(window, text="Submit", command=submit_info)
-delete_button = ttk.Button(window, text="Delete", command=delete_info)
+delete_button = ttk.Button(window, text="Return", command=delete_info)
 
 # Error Box
 error_text = tk.Text(window, height=5, font=("Helvetica", 12))
