@@ -21,7 +21,7 @@ def submit_info():
     # If statements for error messages
     if not name:
         error_text.configure(state="normal")
-        error_text.insert(tk.END, "Please fill in the Customer Full Name.\n")
+        error_text.insert(tk.END, "Please fill in the Customers Full Name.\n")
         error_text.configure(state="disabled")
         return
     
@@ -99,7 +99,13 @@ def delete_info():
 # Creates the GUI window
 window = tk.Tk()
 window.title("Julies Party Hiring Store")
-window.geometry("1024x600")
+window.geometry("1024x700")
+
+# Configure a style for ttk widgets
+style = ttk.Style()
+style.configure("TLabel", font=("Helvetica", 12))
+style.configure("TButton", font=("Helvetica", 12))
+style.configure("Treeview", font=("Helvetica", 12))
 
 # Labels
 name_label = ttk.Label(window, text="Full Name:")
@@ -108,35 +114,34 @@ items_label = ttk.Label(window, text="Items Hired:")
 quantity_label = ttk.Label(window, text="Quantity of Items hired:")
 
 # Entries
-name_entry = ttk.Entry(window)
-receipt_entry = ttk.Entry(window)
-items_entry = ttk.Entry(window)
-quantity_entry = ttk.Entry(window)
+name_entry = ttk.Entry(window, font=("Helvetica", 12))
+receipt_entry = ttk.Entry(window, font=("Helvetica", 12))
+items_entry = ttk.Entry(window, font=("Helvetica", 12))
+quantity_entry = ttk.Entry(window, font=("Helvetica", 12))
 
-#Submit and Delete button
+# Submit and Delete button
 submit_button = ttk.Button(window, text="Submit", command=submit_info)
 delete_button = ttk.Button(window, text="Delete", command=delete_info)
 
 # Error Box
-error_text = tk.Text(window, height=5)
+error_text = tk.Text(window, height=5, font=("Helvetica", 12))
 error_text.configure(state="disabled")
 
-#Tree view
-tree = ttk.Treeview(window)
+# Tree view
+tree = ttk.Treeview(window, show="headings", selectmode="browse")
 tree["columns"] = ("Name", "Receipt", "Items", "Quantity", "Time")
 tree.column("#0", width=0, stretch=tk.NO)
-tree.column("Name", width=150)
-tree.column("Receipt", width=100)
-tree.column("Items", width=150)
-tree.column("Quantity", width=100)
-tree.column("Time", width=150)
-tree.heading("#0", text="", anchor=tk.W)
+tree.column("Name", width=200)
+tree.column("Receipt", width=150)
+tree.column("Items", width=200)
+tree.column("Quantity", width=150)
+tree.column("Time", width=200)
 tree.heading("Name", text="Full Name", anchor=tk.CENTER)
 tree.heading("Receipt", text="Receipt Number", anchor=tk.CENTER)
 tree.heading("Items", text="Items Hired", anchor=tk.CENTER)
-tree.heading("Quantity", text="Quantity of Items hired", anchor=tk.CENTER)
+tree.heading("Quantity", text="Quantity of Items Hired", anchor=tk.CENTER)
 tree.heading("Time", text="Time", anchor=tk.CENTER)
-tree.pack()
+tree.pack(pady=10, padx=10, fill=tk.BOTH, expand=True)
 
 # Labels, Entries, Submit and Delete button for GUI
 name_label.pack(padx=10, pady=5)
