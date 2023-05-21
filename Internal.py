@@ -30,14 +30,8 @@ def submit_info():
         if not quantity:
             raise ValueError("Please fill in the Quantity of Items hired.")
 
-        if not all(char.isalpha() or char.isspace() for char in name):
-            raise ValueError("Invalid name. Letters and spaces only.")
-
         if not receipt.isdigit():
             raise ValueError("Invalid receipt number. Digits only.")
-
-        if not all(char.isalpha() or char.isspace() for char in items):
-            raise ValueError("Invalid items hired. Letters only.")
 
         if not quantity.isdigit() or int(quantity) < MIN_NUMBER or int(quantity) > MAX_NUMBER:
             raise ValueError(f"Invalid Quantity. Please enter a number between {MIN_NUMBER}-{MAX_NUMBER}.")
@@ -75,6 +69,38 @@ def delete_info():
     del submissions[index - 1]  # Remove submission from the list
     tree.delete(selected_item)
 
+# Function to validate the customer's full name entry
+def validate_name_entry(text):
+    if any(char.isdigit() or (not char.isalnum() and char != " ") for char in text):
+        messagebox.showerror("Error", "Numbers and symbols are not allowed in the Customer's Full Name.")
+        return False
+    return True
+
+# Function to validate the receipt number entry
+def validate_receipt_entry(text):
+    if any(char.isalpha() or (not char.isdigit()) for char in text):
+        messagebox.showerror("Error", "Only digits are allowed in the Receipt Number.")
+        return False
+    return True
+
+# Function to validate the items hired entry
+def validate_items_entry(text):
+    if any(char.isdigit() or (not char.isalpha() and not char.isspace()) for char in text):
+        messagebox.showerror("Error", "Numbers and symbols are not allowed in the Items Hired.")
+        return False
+    return True
+
+# Function to validate the quantity entry
+def validate_quantity_entry(text):
+    if text == "":
+        # Allow an empty entry (deleting a single digit)
+        return True
+    if not text.isdigit() or int(text) < MIN_NUMBER or int(text) > MAX_NUMBER:
+        messagebox.showerror("Error", f"Invalid Quantity. Please enter a number between {MIN_NUMBER}-{MAX_NUMBER}.")
+        return False
+    return True
+
+
 # Creates the GUI window
 window = tk.Tk()
 window.title("Julies Party Hiring Store")
@@ -101,6 +127,16 @@ name_entry = ttk.Entry(window, font=("Helvetica", 12))
 receipt_entry = ttk.Entry(window, font=("Helvetica", 12))
 items_entry = ttk.Entry(window, font=("Helvetica", 12))
 quantity_entry = ttk.Entry(window, font=("Helvetica", 12))
+
+# Bind the validation functions to the entry widgets
+name_entry["validate"] = "key"
+name_entry["validatecommand"] = (window.register(validate_name_entry), "%P")
+receipt_entry["validate"] = "key"
+receipt_entry["validatecommand"] = (window.register(validate_receipt_entry), "%P")
+items_entry["validate"] = "key"
+items_entry["validatecommand"] = (window.register(validate_items_entry), "%P")
+quantity_entry["validate"] = "key"
+quantity_entry["validatecommand"] = (window.register(validate_quantity_entry), "%P")
 
 # Submit and Delete button
 submit_button = ttk.Button(window, text="Submit", command=submit_info)
@@ -133,8 +169,8 @@ items_label.grid(row=4, column=0, padx=10, pady=5, sticky="e")
 items_entry.grid(row=4, column=1, padx=10, pady=5, sticky="w")
 quantity_label.grid(row=5, column=0, padx=10, pady=5, sticky="e")
 quantity_entry.grid(row=5, column=1, padx=10, pady=5, sticky="w")
-submit_button.grid(row=2, column=0, columnspan=2, pady=10)
-delete_button.grid(row=3, column=0, columnspan=2, pady=5)
+submit_button.grid(row=6, column=0, columnspan=2, pady=10)
+delete_button.grid(row=7, column=0, columnspan=2, pady=5)
 
 # Configuring grid weights
 window.grid_rowconfigure(1, weight=1)
