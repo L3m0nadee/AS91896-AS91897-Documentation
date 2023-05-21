@@ -6,7 +6,10 @@ from datetime import datetime
 MAX_NUMBER = 500
 MIN_NUMBER = 1
 
-# Function that makes the submission true 
+# List to store submissions
+submissions = []
+
+# Function that makes the submission true
 def submit_info():
     name = name_entry.get()
     receipt = receipt_entry.get()
@@ -17,19 +20,18 @@ def submit_info():
     if not name:
         messagebox.showerror("Error", "Please fill in the Customer's Full Name.")
         return
-    
+
     if not receipt:
         messagebox.showerror("Error", "Please fill in the Receipt Number.")
         return
-    
+
     if not items:
         messagebox.showerror("Error", "Please fill in the Items Hired.")
         return
-    
+
     if not quantity:
         messagebox.showerror("Error", "Please fill in the Quantity of Items hired.")
         return
-
 
     if not all(char.isalpha() or char.isspace() for char in name):
         messagebox.showerror("Error", "Invalid name. Letters and spaces only.")
@@ -53,7 +55,16 @@ def submit_info():
 
     # Shows current time in Treeview
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    index = len(tree.get_children()) + 1  # Get the next index value
+    index = len(submissions) + 1  # Get the next index value
+    submission = {
+        "Index": index,
+        "Name": name,
+        "Receipt": receipt,
+        "Items": items,
+        "Quantity": quantity,
+        "Time": current_time
+    }
+    submissions.append(submission)
     tree.insert("", tk.END, values=(index, name, receipt, items, quantity, current_time))
 
     # Clears Entry fields when submitted
@@ -69,6 +80,8 @@ def delete_info():
     if not selected_item:
         messagebox.showerror("Error", "Select the item returned.")
         return
+    index = int(tree.item(selected_item, "values")[0])
+    del submissions[index - 1]  # Remove submission from the list
     tree.delete(selected_item)
 
 # Creates the GUI window
@@ -129,8 +142,8 @@ items_label.grid(row=4, column=0, padx=10, pady=5, sticky="e")
 items_entry.grid(row=4, column=1, padx=10, pady=5, sticky="w")
 quantity_label.grid(row=5, column=0, padx=10, pady=5, sticky="e")
 quantity_entry.grid(row=5, column=1, padx=10, pady=5, sticky="w")
-submit_button.grid(row=2, column=0, columnspan=2, pady=10)
-delete_button.grid(row=3, column=0, columnspan=2, pady=5)
+submit_button.grid(row=6, column=0, columnspan=2, pady=10)
+delete_button.grid(row=7, column=0, columnspan=2, pady=5)
 
 # Configuring grid weights
 window.grid_rowconfigure(1, weight=1)
