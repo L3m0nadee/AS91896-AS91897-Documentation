@@ -16,63 +16,54 @@ def submit_info():
     items = items_entry.get()
     quantity = quantity_entry.get()
 
-    # IF statements for error messages
-    if not name:
-        messagebox.showerror("Error", "Please fill in the Customer's Full Name.")
-        return
+    try:
+        # IF statements for error messages
+        if not name:
+            raise ValueError("Please fill in the Customer's Full Name.")
 
-    if not receipt:
-        messagebox.showerror("Error", "Please fill in the Receipt Number.")
-        return
+        if not receipt:
+            raise ValueError("Please fill in the Receipt Number.")
 
-    if not items:
-        messagebox.showerror("Error", "Please fill in the Items Hired.")
-        return
+        if not items:
+            raise ValueError("Please fill in the Items Hired.")
 
-    if not quantity:
-        messagebox.showerror("Error", "Please fill in the Quantity of Items hired.")
-        return
+        if not quantity:
+            raise ValueError("Please fill in the Quantity of Items hired.")
 
-    if not all(char.isalpha() or char.isspace() for char in name):
-        messagebox.showerror("Error", "Invalid name. Letters and spaces only.")
+        if not all(char.isalpha() or char.isspace() for char in name):
+            raise ValueError("Invalid name. Letters and spaces only.")
+
+        if not receipt.isdigit():
+            raise ValueError("Invalid receipt number. Digits only.")
+
+        if not all(char.isalpha() or char.isspace() for char in items):
+            raise ValueError("Invalid items hired. Letters only.")
+
+        if not quantity.isdigit() or int(quantity) < MIN_NUMBER or int(quantity) > MAX_NUMBER:
+            raise ValueError(f"Invalid Quantity. Please enter a number between {MIN_NUMBER}-{MAX_NUMBER}.")
+
+        # Shows current time in Treeview
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        index = len(submissions) + 1  # Get the next index value
+        submission = {
+            "Index": index,
+            "Name": name,
+            "Receipt": receipt,
+            "Items": items,
+            "Quantity": quantity,
+            "Time": current_time
+        }
+        submissions.append(submission)
+        tree.insert("", tk.END, values=(index, name, receipt, items, quantity, current_time))
+
+        # Clears Entry fields when submitted
         name_entry.delete(0, tk.END)
-        return
-
-    if not receipt.isdigit():
-        messagebox.showerror("Error", "Invalid receipt number. Digits only.")
         receipt_entry.delete(0, tk.END)
-        return
-
-    if not all(char.isalpha() or char.isspace() for char in items):
-        messagebox.showerror("Error", "Invalid items hired. Letters only.")
         items_entry.delete(0, tk.END)
-        return
-
-    if not quantity.isdigit() or int(quantity) < MIN_NUMBER or int(quantity) > MAX_NUMBER:
-        messagebox.showerror("Error", f"Invalid Quantity. Please enter a number between {MIN_NUMBER}-{MAX_NUMBER}.")
         quantity_entry.delete(0, tk.END)
-        return
 
-    # Shows current time in Treeview
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    index = len(submissions) + 1  # Get the next index value
-    submission = {
-        "Index": index,
-        "Name": name,
-        "Receipt": receipt,
-        "Items": items,
-        "Quantity": quantity,
-        "Time": current_time
-    }
-    submissions.append(submission)
-    tree.insert("", tk.END, values=(index, name, receipt, items, quantity, current_time))
-
-    # Clears Entry fields when submitted
-    name_entry.delete(0, tk.END)
-    receipt_entry.delete(0, tk.END)
-    items_entry.delete(0, tk.END)
-    quantity_entry.delete(0, tk.END)
-
+    except ValueError as error:
+        messagebox.showerror("Error", str(error))
 
 # Function for deleting information
 def delete_info():
@@ -142,8 +133,8 @@ items_label.grid(row=4, column=0, padx=10, pady=5, sticky="e")
 items_entry.grid(row=4, column=1, padx=10, pady=5, sticky="w")
 quantity_label.grid(row=5, column=0, padx=10, pady=5, sticky="e")
 quantity_entry.grid(row=5, column=1, padx=10, pady=5, sticky="w")
-submit_button.grid(row=6, column=0, columnspan=2, pady=10)
-delete_button.grid(row=7, column=0, columnspan=2, pady=5)
+submit_button.grid(row=2, column=0, columnspan=2, pady=10)
+delete_button.grid(row=3, column=0, columnspan=2, pady=5)
 
 # Configuring grid weights
 window.grid_rowconfigure(1, weight=1)
