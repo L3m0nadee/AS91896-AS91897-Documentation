@@ -100,7 +100,7 @@ quantity_entry = ttk.Entry(window, font=("Helvetica", 12))
 
 # Submit and Delete button
 submit_button = ttk.Button(window, text="Submit", command=submit_info)
-delete_button = ttk.Button(window, text="Return", command=delete_info)
+delete_button = ttk.Button(window, text="Return Items", command=delete_info)
 
 # Tree view
 tree = ttk.Treeview(window, show="headings", selectmode="browse")
