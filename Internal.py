@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from datetime import datetime
 
 # Constants
@@ -13,64 +13,41 @@ def submit_info():
     items = items_entry.get()
     quantity = quantity_entry.get()
 
-    # Function for Error box
-    error_text.configure(state="normal")
-    error_text.delete("1.0", tk.END)
-    error_text.configure(state="disabled")
-
-    # If statements for error messages
+    # IF statements for error messages
     if not name:
-        error_text.configure(state="normal")
-        error_text.insert(tk.END, "Please fill in the Customers Full Name.\n")
-        error_text.configure(state="disabled")
+        messagebox.showerror("Error", "Please fill in the Customer's Full Name.")
         return
     
     if not receipt:
-        error_text.configure(state="normal")
-        error_text.insert(tk.END, "Please fill in the Receipt Number.\n")
-        error_text.configure(state="disabled")
+        messagebox.showerror("Error", "Please fill in the Receipt Number.")
         return
     
     if not items:
-        error_text.configure(state="normal")
-        error_text.insert(tk.END, "Please fill in the Items Hired.\n")
-        error_text.configure(state="disabled")
+        messagebox.showerror("Error", "Please fill in the Items Hired.")
         return
     
     if not quantity:
-        error_text.configure(state="normal")
-        error_text.insert(tk.END, "Please fill in the Quantity of Items hired.\n")
-        error_text.configure(state="disabled")
+        messagebox.showerror("Error", "Please fill in the Quantity of Items hired.")
         return
 
 
     if not all(char.isalpha() or char.isspace() for char in name):
-        error_text.configure(state="normal")
-        error_text.insert(tk.END, "Invalid name.\n")
-        error_text.configure(state="disabled")
+        messagebox.showerror("Error", "Invalid name. Letters and spaces only.")
         name_entry.delete(0, tk.END)
         return
 
     if not receipt.isdigit():
-        error_text.configure(state="normal")
-        error_text.insert(tk.END, "Invalid receipt number. Digits only\n")
-        error_text.configure(state="disabled")
+        messagebox.showerror("Error", "Invalid receipt number. Digits only.")
         receipt_entry.delete(0, tk.END)
         return
 
-    if not all(char.isalpha() or char.isspace() for char in name):
-        error_text.configure(state="normal")
-        error_text.insert(tk.END, "Invalid items hired.\nLetters only.\n")
-        error_text.configure(state="disabled")
+    if not all(char.isalpha() or char.isspace() for char in items):
+        messagebox.showerror("Error", "Invalid items hired. Letters only.")
         items_entry.delete(0, tk.END)
         return
 
     if not quantity.isdigit() or int(quantity) < MIN_NUMBER or int(quantity) > MAX_NUMBER:
-        error_text.configure(state="normal")
-        error_text.insert(
-            tk.END, f"Invalid Quantity.\nPlease enter a number between {MIN_NUMBER}-{MAX_NUMBER}.\n"
-        )
-        error_text.configure(state="disabled")
+        messagebox.showerror("Error", f"Invalid Quantity. Please enter a number between {MIN_NUMBER}-{MAX_NUMBER}.")
         quantity_entry.delete(0, tk.END)
         return
 
@@ -90,10 +67,7 @@ def submit_info():
 def delete_info():
     selected_item = tree.selection()
     if not selected_item:
-        error_text.configure(state="normal")
-        error_text.delete("1.0", tk.END)
-        error_text.insert(tk.END, "Select the item returned.\n")
-        error_text.configure(state="disabled")
+        messagebox.showerror("Error", "Select the item returned.")
         return
     tree.delete(selected_item)
 
@@ -128,9 +102,7 @@ quantity_entry = ttk.Entry(window, font=("Helvetica", 12))
 submit_button = ttk.Button(window, text="Submit", command=submit_info)
 delete_button = ttk.Button(window, text="Return", command=delete_info)
 
-# Error Box
-error_text = tk.Text(window, height=5, font=("Helvetica", 12))
-error_text.configure(state="disabled")
+
 
 # Tree view
 tree = ttk.Treeview(window, show="headings", selectmode="browse")
@@ -161,7 +133,7 @@ quantity_label.pack(padx=10, pady=5)
 quantity_entry.pack(padx=10, pady=5)
 submit_button.pack(pady=10)
 delete_button.pack(pady=5)
-error_text.pack()
+
 
 # Runs the GUI
 window.mainloop()
