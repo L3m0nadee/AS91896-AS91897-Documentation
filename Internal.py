@@ -84,7 +84,7 @@ style.configure("Treeview", font=("Helvetica", 12))
 
 # Title label
 title_label = ttk.Label(window, text="List of Items Hired", font=("Helvetica", 16, "bold"))
-title_label.pack(pady=10)
+title_label.grid(row=0, column=0, columnspan=2, pady=10)
 
 # Labels
 name_label = ttk.Label(window, text="Full Name:")
@@ -102,8 +102,6 @@ quantity_entry = ttk.Entry(window, font=("Helvetica", 12))
 submit_button = ttk.Button(window, text="Submit", command=submit_info)
 delete_button = ttk.Button(window, text="Return", command=delete_info)
 
-
-
 # Tree view
 tree = ttk.Treeview(window, show="headings", selectmode="browse")
 tree["columns"] = ("Column", "Name", "Receipt", "Items", "Quantity", "Time")
@@ -120,20 +118,23 @@ tree.heading("Receipt", text="Receipt Number", anchor=tk.CENTER)
 tree.heading("Items", text="Items Hired", anchor=tk.CENTER)
 tree.heading("Quantity", text="Quantity of Items Hired", anchor=tk.CENTER)
 tree.heading("Time", text="Time", anchor=tk.CENTER)
-tree.pack(pady=10, padx=10, fill=tk.BOTH, expand=True)
+tree.grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
 
 # Labels, Entries, Submit and Delete button for GUI
-name_label.pack(padx=10, pady=5)
-name_entry.pack(padx=10, pady=5)
-receipt_label.pack(padx=10, pady=5)
-receipt_entry.pack(padx=10, pady=5)
-items_label.pack(padx=10, pady=5)
-items_entry.pack(padx=10, pady=5)
-quantity_label.pack(padx=10, pady=5)
-quantity_entry.pack(padx=10, pady=5)
-submit_button.pack(pady=10)
-delete_button.pack(pady=5)
+name_label.grid(row=2, column=0, padx=10, pady=5, sticky="e")
+name_entry.grid(row=2, column=1, padx=10, pady=5, sticky="w")
+receipt_label.grid(row=3, column=0, padx=10, pady=5, sticky="e")
+receipt_entry.grid(row=3, column=1, padx=10, pady=5, sticky="w")
+items_label.grid(row=4, column=0, padx=10, pady=5, sticky="e")
+items_entry.grid(row=4, column=1, padx=10, pady=5, sticky="w")
+quantity_label.grid(row=5, column=0, padx=10, pady=5, sticky="e")
+quantity_entry.grid(row=5, column=1, padx=10, pady=5, sticky="w")
+submit_button.grid(row=2, column=0, columnspan=2, pady=10)
+delete_button.grid(row=3, column=0, columnspan=2, pady=5)
 
+# Configuring grid weights
+window.grid_rowconfigure(1, weight=1)
+window.grid_columnconfigure(1, weight=1)
 
 # Runs the GUI
 window.mainloop()
