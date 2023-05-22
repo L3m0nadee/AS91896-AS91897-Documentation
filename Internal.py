@@ -36,6 +36,11 @@ def submit_info():
         if not quantity.isdigit() or int(quantity) < MIN_NUMBER or int(quantity) > MAX_NUMBER:
             raise ValueError(f"Invalid Quantity. Please enter a number between {MIN_NUMBER}-{MAX_NUMBER}.")
 
+        # Check if receipt number already exists
+        for submission in submissions:
+            if submission["Receipt"] == receipt:
+                raise ValueError("Duplicate receipt number. Please enter a unique receipt number.")
+
         # Shows current time in Treeview
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         index = len(submissions) + 1  # Get the next index value
