@@ -9,7 +9,7 @@ MIN_NUMBER = 1
 # List to store submissions
 submissions = []
 
-# Function that makes the submission true
+# Function for Submit Button
 def submit_info():
     name = name_entry.get()
     receipt = receipt_entry.get()
@@ -64,6 +64,7 @@ def submit_info():
     except ValueError as error:
         messagebox.showerror("Error", str(error))
 
+
 # Function for deleting information
 def delete_info():
     selected_item = tree.selection()
@@ -111,7 +112,7 @@ window = tk.Tk()
 window.title("Julies Party Hiring Store")
 window.geometry("1024x700")
 
-# Configure a style for ttk widgets
+# Style for Font
 style = ttk.Style()
 style.configure("TLabel", font=("Helvetica", 12))
 style.configure("TButton", font=("Helvetica", 12))
@@ -177,7 +178,7 @@ quantity_entry.grid(row=5, column=1, padx=10, pady=5, sticky="w")
 submit_button.grid(row=2, column=0, columnspan=2, pady=10)
 delete_button.grid(row=3, column=0, columnspan=2, pady=5)
 
-# Configuring grid weights
+#  Grid weights
 window.grid_rowconfigure(1, weight=1)
 window.grid_columnconfigure(1, weight=1)
 
