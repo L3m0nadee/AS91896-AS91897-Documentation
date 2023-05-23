@@ -30,12 +30,6 @@ def submit_info():
         if not quantity:
             raise ValueError("Please fill in the Quantity of Items hired.")
 
-        if not receipt.isdigit():
-            raise ValueError("Invalid receipt number. Digits only.")
-
-        if not quantity.isdigit() or int(quantity) < MIN_NUMBER or int(quantity) > MAX_NUMBER:
-            raise ValueError(f"Invalid Quantity. Please enter a number between {MIN_NUMBER}-{MAX_NUMBER}.")
-
         # Check if receipt number already exists
         for submission in submissions:
             if submission["Receipt"] == receipt:
