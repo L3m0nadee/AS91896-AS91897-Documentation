@@ -177,8 +177,8 @@ items_label.grid(row=4, column=0, padx=10, pady=5, sticky="e")
 items_entry.grid(row=4, column=1, padx=10, pady=5, sticky="w")
 quantity_label.grid(row=5, column=0, padx=10, pady=5, sticky="e")
 quantity_entry.grid(row=5, column=1, padx=10, pady=5, sticky="w")
-submit_button.grid(row=6, column=0, columnspan=2, pady=10)
-delete_button.grid(row=7, column=0, columnspan=2, pady=5)
+submit_button.grid(row=2, column=0, columnspan=2, pady=10)
+delete_button.grid(row=3, column=0, columnspan=2, pady=5)
 
 # Configuring grid weights
 window.grid_rowconfigure(1, weight=1)
