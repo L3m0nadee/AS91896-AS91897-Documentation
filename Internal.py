@@ -116,19 +116,19 @@ window.geometry("1024x700")
 
 # Configure a style for ttk widgets
 style = ttk.Style()
-style.configure("TLabel", font=("Helvetica", 12), foreground="blue")  # Set label font and color
-style.configure("TButton", font=("Helvetica", 12), foreground="white", background="green")  # Set button font, foreground, and background colors
-style.configure("Treeview", font=("Helvetica", 12), background="white", fieldbackground="white")  # Set Treeview font, foreground, and background colors
+style.configure("TLabel", font=("Helvetica", 12), )  
+style.configure("TButton", font=("Helvetica", 12),  )  
+style.configure("Treeview", font=("Helvetica", 12),  )  
 
 # Title label
-title_label = ttk.Label(window, text="List of Items Hired", font=("Helvetica", 16, "bold"), foreground="purple")  # Set title label font and color
+title_label = ttk.Label(window, text="List of Items Hired", font=("Helvetica", 16, "bold"), )  
 title_label.grid(row=0, column=0, columnspan=2, pady=10)
 
 # Labels
-name_label = ttk.Label(window, text="Full Name:", foreground="red")  # Set label color
-receipt_label = ttk.Label(window, text="Receipt Number:", foreground="red")  # Set label color
-items_label = ttk.Label(window, text="Items Hired:", foreground="red")  # Set label color
-quantity_label = ttk.Label(window, text="Quantity of Items hired:", foreground="red")  # Set label color
+name_label = ttk.Label(window, text="Full Name:", )  
+receipt_label = ttk.Label(window, text="Receipt Number:", )  
+items_label = ttk.Label(window, text="Items Hired:", )  
+quantity_label = ttk.Label(window, text="Quantity of Items hired:", )  
 
 # Entries
 name_entry = ttk.Entry(window, font=("Helvetica", 12))
