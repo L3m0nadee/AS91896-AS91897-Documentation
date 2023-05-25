@@ -6,10 +6,14 @@ from datetime import datetime
 MAX_NUMBER = 500
 MIN_NUMBER = 1
 
+# Error class
+class Error(Exception):
+    pass
+
 # List to store submissions
 submissions = []
 
-# Function for Submit Button
+# Function that makes the submission true
 def submit_info():
     name = name_entry.get()
     receipt = receipt_entry.get()
@@ -19,21 +23,27 @@ def submit_info():
     try:
         # IF statements for error messages
         if not name:
-            raise ValueError("Please fill in the Customer's Full Name.")
+            raise Error("Please fill in the Customer's Full Name.")
 
         if not receipt:
-            raise ValueError("Please fill in the Receipt Number.")
+            raise Error("Please fill in the Receipt Number.")
 
         if not items:
-            raise ValueError("Please fill in the Items Hired.")
+            raise Error("Please fill in the Items Hired.")
 
         if not quantity:
-            raise ValueError("Please fill in the Quantity of Items hired.")
+            raise Error("Please fill in the Quantity of Items hired.")
+
+        if not receipt.isdigit():
+            raise Error("Invalid receipt number. Digits only.")
+
+        if not quantity.isdigit() or int(quantity) < MIN_NUMBER or int(quantity) > MAX_NUMBER:
+            raise Error(f"Invalid Quantity. Please enter a number between {MIN_NUMBER}-{MAX_NUMBER}.")
 
         # Check if receipt number already exists
         for submission in submissions:
             if submission["Receipt"] == receipt:
-                raise ValueError("Duplicate receipt number. Please enter a unique receipt number.")
+                raise Error("Duplicate receipt number. Please enter a unique receipt number.")
 
         # Shows current time in Treeview
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -55,11 +65,10 @@ def submit_info():
         items_entry.delete(0, tk.END)
         quantity_entry.delete(0, tk.END)
 
-    except ValueError as error:
+    except Error as error:
         messagebox.showerror("Error", str(error))
 
-
-# Function for deleting information
+#  Deleting information
 def delete_info():
     selected_item = tree.selection()
     if not selected_item:
@@ -69,28 +78,28 @@ def delete_info():
     del submissions[index - 1]  # Remove submission from the list
     tree.delete(selected_item)
 
-# Function to validate the customer's full name entry
+#  Customer's full name entry
 def validate_name_entry(text):
     if any(char.isdigit() or (not char.isalnum() and char != " ") for char in text):
         messagebox.showerror("Error", "Numbers and symbols are not allowed in the Customer's Full Name.")
         return False
     return True
 
-# Function to validate the receipt number entry
+#  Receipt number entry
 def validate_receipt_entry(text):
     if any(char.isalpha() or (not char.isdigit()) for char in text):
         messagebox.showerror("Error", "Only digits are allowed in the Receipt Number.")
         return False
     return True
 
-# Function to validate the items hired entry
+# Items hired entry
 def validate_items_entry(text):
     if any(char.isdigit() or (not char.isalpha() and not char.isspace()) for char in text):
         messagebox.showerror("Error", "Numbers and symbols are not allowed in the Items Hired.")
         return False
     return True
 
-# Function to validate the quantity entry
+#  Quantity entry
 def validate_quantity_entry(text):
     if text == "":
         # Allow an empty entry (deleting a single digit)
@@ -100,27 +109,26 @@ def validate_quantity_entry(text):
         return False
     return True
 
-
 # Creates the GUI window
 window = tk.Tk()
 window.title("Julies Party Hiring Store")
 window.geometry("1024x700")
 
-# Style for Font
+# Configure a style for ttk widgets
 style = ttk.Style()
-style.configure("TLabel", font=("Helvetica", 12))
-style.configure("TButton", font=("Helvetica", 12))
-style.configure("Treeview", font=("Helvetica", 12))
+style.configure("TLabel", font=("Helvetica", 12), foreground="blue")  # Set label font and color
+style.configure("TButton", font=("Helvetica", 12), foreground="white", background="green")  # Set button font, foreground, and background colors
+style.configure("Treeview", font=("Helvetica", 12), background="white", fieldbackground="white")  # Set Treeview font, foreground, and background colors
 
 # Title label
-title_label = ttk.Label(window, text="List of Items Hired", font=("Helvetica", 16, "bold"))
+title_label = ttk.Label(window, text="List of Items Hired", font=("Helvetica", 16, "bold"), foreground="purple")  # Set title label font and color
 title_label.grid(row=0, column=0, columnspan=2, pady=10)
 
 # Labels
-name_label = ttk.Label(window, text="Full Name:")
-receipt_label = ttk.Label(window, text="Receipt Number:")
-items_label = ttk.Label(window, text="Items Hired:")
-quantity_label = ttk.Label(window, text="Quantity of Items hired:")
+name_label = ttk.Label(window, text="Full Name:", foreground="red")  # Set label color
+receipt_label = ttk.Label(window, text="Receipt Number:", foreground="red")  # Set label color
+items_label = ttk.Label(window, text="Items Hired:", foreground="red")  # Set label color
+quantity_label = ttk.Label(window, text="Quantity of Items hired:", foreground="red")  # Set label color
 
 # Entries
 name_entry = ttk.Entry(window, font=("Helvetica", 12))
@@ -143,7 +151,7 @@ submit_button = ttk.Button(window, text="Submit", command=submit_info)
 delete_button = ttk.Button(window, text="Return Items", command=delete_info)
 
 # Tree view
-tree = ttk.Treeview(window, show="headings", selectmode="browse")
+tree = ttk.Treeview(window, show="headings", selectmode="browse", height=10)
 tree["columns"] = ("Column", "Name", "Receipt", "Items", "Quantity", "Time")
 tree.column("#0", width=0, stretch=tk.NO)
 tree.column("Column", width=100)
@@ -169,10 +177,10 @@ items_label.grid(row=4, column=0, padx=10, pady=5, sticky="e")
 items_entry.grid(row=4, column=1, padx=10, pady=5, sticky="w")
 quantity_label.grid(row=5, column=0, padx=10, pady=5, sticky="e")
 quantity_entry.grid(row=5, column=1, padx=10, pady=5, sticky="w")
-submit_button.grid(row=2, column=0, columnspan=2, pady=10)
-delete_button.grid(row=3, column=0, columnspan=2, pady=5)
+submit_button.grid(row=6, column=0, columnspan=2, pady=10)
+delete_button.grid(row=7, column=0, columnspan=2, pady=5)
 
-#  Grid weights
+# Configuring grid weights
 window.grid_rowconfigure(1, weight=1)
 window.grid_columnconfigure(1, weight=1)
 
