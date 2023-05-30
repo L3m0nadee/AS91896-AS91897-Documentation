@@ -17,7 +17,7 @@ submissions = []
 def submit_info():
     name = name_entry.get()
     receipt = receipt_entry.get()
-    items = items_entry.get()
+    items = items_combobox.get()
     quantity = quantity_entry.get()
 
     try:
@@ -29,13 +29,10 @@ def submit_info():
             raise Error("Please fill in the Receipt Number.")
 
         if not items:
-            raise Error("Please fill in the Items Hired.")
+            raise Error("Please select an item.")
 
         if not quantity:
             raise Error("Please fill in the Quantity of Items hired.")
-
-        if not receipt.isdigit():
-            raise Error("Invalid receipt number. Digits only.")
 
         # Check if receipt number already exists
         for submission in submissions:
@@ -59,13 +56,14 @@ def submit_info():
         # Clears Entry fields when submitted
         name_entry.delete(0, tk.END)
         receipt_entry.delete(0, tk.END)
-        items_entry.delete(0, tk.END)
+        items_combobox.set('')
         quantity_entry.delete(0, tk.END)
-
+        
+    # Error box
     except Error as error:
         messagebox.showerror("Error", str(error))
 
-#  Deleting information
+# Deleting information
 def delete_info():
     selected_item = tree.selection()
     if not selected_item:
@@ -75,28 +73,25 @@ def delete_info():
     del submissions[index - 1]  # Remove submission from the list
     tree.delete(selected_item)
 
-#  Customer's full name entry
+# Delete selected item from Treeview when pressing Backspace key
+def delete_selected_item(event):
+    delete_info()
+
+# Customer's full name entry
 def validate_name_entry(text):
     if any(char.isdigit() or (not char.isalnum() and char != " ") for char in text):
         messagebox.showerror("Error", "Numbers and symbols are not allowed in the Customer's Full Name.")
         return False
     return True
 
-#  Receipt number entry
+# Receipt number entry
 def validate_receipt_entry(text):
     if any(char.isalpha() or (not char.isdigit()) for char in text):
         messagebox.showerror("Error", "Only digits are allowed in the Receipt Number.")
         return False
     return True
 
-# Items hired entry
-def validate_items_entry(text):
-    if any(char.isdigit() or (not char.isalpha() and not char.isspace()) for char in text):
-        messagebox.showerror("Error", "Numbers and symbols are not allowed in the Items Hired.")
-        return False
-    return True
-
-#  Quantity entry
+# Quantity entry
 def validate_quantity_entry(text):
     if text == "":
         # Allow an empty entry (deleting a single digit)
@@ -113,33 +108,35 @@ window.geometry("1024x700")
 
 # Configure a style for ttk widgets
 style = ttk.Style()
-style.configure("TLabel", font=("Helvetica", 12), )  
-style.configure("TButton", font=("Helvetica", 12),  )  
-style.configure("Treeview", font=("Helvetica", 12),  )  
+style.configure("TLabel", font=("Helvetica", 12))
+style.configure("TButton", font=("Helvetica", 12))
+style.configure("Treeview", font=("Helvetica", 12))
 
 # Title label
-title_label = ttk.Label(window, text="List of Items Hired", font=("Helvetica", 16, "bold"), )  
+title_label = ttk.Label(window, text="List of Items Hired", font=("Helvetica", 16, "bold"))
 title_label.grid(row=0, column=0, columnspan=2, pady=10)
 
 # Labels
-name_label = ttk.Label(window, text="Full Name:", )  
-receipt_label = ttk.Label(window, text="Receipt Number:", )  
-items_label = ttk.Label(window, text="Items Hired:", )  
-quantity_label = ttk.Label(window, text="Quantity of Items hired:", )  
+name_label = ttk.Label(window, text="Full Name:")
+receipt_label = ttk.Label(window, text="Receipt Number:")
+items_label = ttk.Label(window, text="Items Hired:")
+quantity_label = ttk.Label(window, text="Quantity of Items hired:")
 
 # Entries
 name_entry = ttk.Entry(window, font=("Helvetica", 12))
 receipt_entry = ttk.Entry(window, font=("Helvetica", 12))
-items_entry = ttk.Entry(window, font=("Helvetica", 12))
 quantity_entry = ttk.Entry(window, font=("Helvetica", 12))
+
+# Combobox for items
+items_combobox = ttk.Combobox(window, font=("Helvetica", 12), state="readonly")
+items_combobox['values'] = ('Entertainment', 'Cups', 'Furniture', 'Catering', 'LED products', 'Themes and Accessories')
+items_combobox.current(0)  # Set the default selection
 
 # Bind the validation functions to the entry widgets
 name_entry["validate"] = "key"
 name_entry["validatecommand"] = (window.register(validate_name_entry), "%P")
 receipt_entry["validate"] = "key"
 receipt_entry["validatecommand"] = (window.register(validate_receipt_entry), "%P")
-items_entry["validate"] = "key"
-items_entry["validatecommand"] = (window.register(validate_items_entry), "%P")
 quantity_entry["validate"] = "key"
 quantity_entry["validatecommand"] = (window.register(validate_quantity_entry), "%P")
 
@@ -171,7 +168,7 @@ name_entry.grid(row=2, column=1, padx=10, pady=5, sticky="w")
 receipt_label.grid(row=3, column=0, padx=10, pady=5, sticky="e")
 receipt_entry.grid(row=3, column=1, padx=10, pady=5, sticky="w")
 items_label.grid(row=4, column=0, padx=10, pady=5, sticky="e")
-items_entry.grid(row=4, column=1, padx=10, pady=5, sticky="w")
+items_combobox.grid(row=4, column=1, padx=10, pady=5, sticky="w")
 quantity_label.grid(row=5, column=0, padx=10, pady=5, sticky="e")
 quantity_entry.grid(row=5, column=1, padx=10, pady=5, sticky="w")
 submit_button.grid(row=2, column=0, columnspan=2, pady=10)
@@ -180,6 +177,9 @@ delete_button.grid(row=3, column=0, columnspan=2, pady=5)
 # Configuring grid weights
 window.grid_rowconfigure(1, weight=1)
 window.grid_columnconfigure(1, weight=1)
+
+# Allows you to press backspace inside the treeview
+window.bind("<BackSpace>", delete_selected_item)
 
 # Runs the GUI
 window.mainloop()
