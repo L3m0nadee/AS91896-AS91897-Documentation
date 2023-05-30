@@ -58,7 +58,10 @@ def submit_info():
         receipt_entry.delete(0, tk.END)
         items_combobox.set('')
         quantity_entry.delete(0, tk.END)
-        
+
+        # Sort the treeview by receipt number
+        tree_sort_by_receipt()
+
     # Error box
     except Error as error:
         messagebox.showerror("Error", str(error))
@@ -100,6 +103,13 @@ def validate_quantity_entry(text):
         messagebox.showerror("Error", f"Invalid Quantity. Please enter a number between {MIN_NUMBER}-{MAX_NUMBER}.")
         return False
     return True
+
+# Function to sort the treeview by receipt number
+def tree_sort_by_receipt():
+    tree_data = [(tree.item(item)["values"], item) for item in tree.get_children()]
+    tree_data.sort(key=lambda x: x[0][2])  # Sort by receipt number
+    for i, (values, item) in enumerate(tree_data):
+        tree.move(item, "", i)
 
 # Creates the GUI window
 window = tk.Tk()
