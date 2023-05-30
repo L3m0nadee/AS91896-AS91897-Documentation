@@ -73,6 +73,8 @@ def submit_info():
         # Display error message in a messagebox
         messagebox.showerror("Error", str(error))
 
+
+
 # Function to delete selected information from the treeview
 def delete_info():
     selected_item = tree.selection()
@@ -80,8 +82,17 @@ def delete_info():
         messagebox.showerror("Error", "Select the item returned.")
         return
     index = int(tree.item(selected_item, "values")[0])
-    del submissions[index - 1]  # Remove submission from the list
+    submission = submissions[index - 1]
+    submissions.remove(submission)  # Remove submission from the list
     tree.delete(selected_item)
+    clear_entry_fields()
+
+# Function that clears all the entries when you click the return button
+def clear_entry_fields():
+    name_entry.delete(0, tk.END)
+    receipt_entry.delete(0, tk.END)
+    items_combobox.set('')
+    quantity_entry.delete(0, tk.END)
 
 # Function to handle deletion of selected item from the treeview using the Backspace key
 def delete_selected_item(event):
