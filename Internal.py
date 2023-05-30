@@ -74,18 +74,31 @@ def submit_info():
         messagebox.showerror("Error", str(error))
 
 
-
 # Function to delete selected information from the treeview
 def delete_info():
     selected_item = tree.selection()
     if not selected_item:
         messagebox.showerror("Error", "Select the item returned.")
         return
-    index = int(tree.item(selected_item, "values")[0])
-    submission = submissions[index - 1]
-    submissions.remove(submission)  # Remove submission from the list
-    tree.delete(selected_item)
-    clear_entry_fields()
+    receipt = tree.item(selected_item, "values")[2]  # Get the receipt number of the selected item
+
+    for submission in submissions:
+        if submission["Receipt"] == receipt:
+            submissions.remove(submission)  # Remove submission from the list
+            tree.delete(selected_item)
+            clear_entry_fields()
+            update_submission_indices()
+            return
+
+    # If no submission was found with the selected receipt number
+    messagebox.showerror("Error", "Selected item not found.")
+
+
+# Function to update the index values of submissions in the list
+def update_submission_indices():
+    for i, submission in enumerate(submissions):
+        submission["Index"] = i + 1
+
 
 # Function that clears all the entries when you click the return button
 def clear_entry_fields():
@@ -93,10 +106,6 @@ def clear_entry_fields():
     receipt_entry.delete(0, tk.END)
     items_combobox.set('')
     quantity_entry.delete(0, tk.END)
-
-# Function to handle deletion of selected item from the treeview using the Backspace key
-def delete_selected_item(event):
-    delete_info()
 
 # Validation function for customer name entry
 def validate_name_entry(text):
@@ -206,8 +215,6 @@ delete_button.grid(row=3, column=0, columnspan=2, pady=5)
 window.grid_rowconfigure(1, weight=1)
 window.grid_columnconfigure(1, weight=1)
 
-# Allow pressing backspace inside the treeview
-window.bind("<BackSpace>", delete_selected_item)
 
 # Run the GUI
 window.mainloop()
