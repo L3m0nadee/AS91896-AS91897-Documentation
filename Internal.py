@@ -13,15 +13,16 @@ class Error(Exception):
 # List to store submissions
 submissions = []
 
-# Function that makes the submission true
+# Function to submit customer information
 def submit_info():
+    # Get values from entry fields
     name = name_entry.get()
     receipt = receipt_entry.get()
     items = items_combobox.get()
     quantity = quantity_entry.get()
 
     try:
-        # IF statements for error messages
+        # Validation checks for input fields
         if not name:
             raise Error("Please fill in the Customer's Full Name.")
 
@@ -39,9 +40,11 @@ def submit_info():
             if submission["Receipt"] == receipt:
                 raise Error("Duplicate receipt number. Please enter a unique receipt number.")
 
-        # Shows current time in Treeview
+        # Get current time
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         index = len(submissions) + 1  # Get the next index value
+
+        # Create submission dictionary
         submission = {
             "Index": index,
             "Name": name,
@@ -50,10 +53,14 @@ def submit_info():
             "Quantity": quantity,
             "Time": current_time
         }
+
+        # Add submission to the list
         submissions.append(submission)
+
+        # Insert values into the treeview
         tree.insert("", tk.END, values=(index, name, receipt, items, quantity, current_time))
 
-        # Clears Entry fields when submitted
+        # Clear entry fields after submission
         name_entry.delete(0, tk.END)
         receipt_entry.delete(0, tk.END)
         items_combobox.set('')
@@ -62,11 +69,11 @@ def submit_info():
         # Sort the treeview by receipt number
         tree_sort_by_receipt()
 
-    # Error box
     except Error as error:
+        # Display error message in a messagebox
         messagebox.showerror("Error", str(error))
 
-# Deleting information
+# Function to delete selected information from the treeview
 def delete_info():
     selected_item = tree.selection()
     if not selected_item:
@@ -76,25 +83,25 @@ def delete_info():
     del submissions[index - 1]  # Remove submission from the list
     tree.delete(selected_item)
 
-# Delete selected item from Treeview when pressing Backspace key
+# Function to handle deletion of selected item from the treeview using the Backspace key
 def delete_selected_item(event):
     delete_info()
 
-# Customer's full name entry
+# Validation function for customer name entry
 def validate_name_entry(text):
     if any(char.isdigit() or (not char.isalnum() and char != " ") for char in text):
         messagebox.showerror("Error", "Numbers and symbols are not allowed in the Customer's Full Name.")
         return False
     return True
 
-# Receipt number entry
+# Validation function for receipt number entry
 def validate_receipt_entry(text):
     if any(char.isalpha() or (not char.isdigit()) for char in text):
         messagebox.showerror("Error", "Only digits are allowed in the Receipt Number.")
         return False
     return True
 
-# Quantity entry
+# Validation function for quantity entry
 def validate_quantity_entry(text):
     if text == "":
         # Allow an empty entry (deleting a single digit)
@@ -111,7 +118,7 @@ def tree_sort_by_receipt():
     for i, (values, item) in enumerate(tree_data):
         tree.move(item, "", i)
 
-# Creates the GUI window
+# Create the GUI window
 window = tk.Tk()
 window.title("Julies Party Hiring Store")
 window.geometry("1024x700")
@@ -150,11 +157,11 @@ receipt_entry["validatecommand"] = (window.register(validate_receipt_entry), "%P
 quantity_entry["validate"] = "key"
 quantity_entry["validatecommand"] = (window.register(validate_quantity_entry), "%P")
 
-# Submit and Delete button
+# Submit and Delete buttons
 submit_button = ttk.Button(window, text="Submit", command=submit_info)
 delete_button = ttk.Button(window, text="Return Items", command=delete_info)
 
-# Tree view
+# Treeview
 tree = ttk.Treeview(window, show="headings", selectmode="browse", height=10)
 tree["columns"] = ("Column", "Name", "Receipt", "Items", "Quantity", "Time")
 tree.column("#0", width=0, stretch=tk.NO)
@@ -172,7 +179,7 @@ tree.heading("Quantity", text="Quantity of Items Hired", anchor=tk.CENTER)
 tree.heading("Time", text="Time", anchor=tk.CENTER)
 tree.grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
 
-# Labels, Entries, Submit and Delete button for GUI
+# Labels, Entries, Submit and Delete buttons for the GUI
 name_label.grid(row=2, column=0, padx=10, pady=5, sticky="e")
 name_entry.grid(row=2, column=1, padx=10, pady=5, sticky="w")
 receipt_label.grid(row=3, column=0, padx=10, pady=5, sticky="e")
@@ -184,12 +191,12 @@ quantity_entry.grid(row=5, column=1, padx=10, pady=5, sticky="w")
 submit_button.grid(row=2, column=0, columnspan=2, pady=10)
 delete_button.grid(row=3, column=0, columnspan=2, pady=5)
 
-# Configuring grid weights
+# Configure grid weights
 window.grid_rowconfigure(1, weight=1)
 window.grid_columnconfigure(1, weight=1)
 
-# Allows you to press backspace inside the treeview
+# Allow pressing backspace inside the treeview
 window.bind("<BackSpace>", delete_selected_item)
 
-# Runs the GUI
+# Run the GUI
 window.mainloop()
