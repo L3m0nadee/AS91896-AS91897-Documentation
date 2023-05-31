@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime
+import json
 
 # Constants
 MAX_NUMBER = 500
@@ -22,7 +23,7 @@ def submit_info():
     quantity = quantity_entry.get()
 
     try:
-        # Validation checks for input fields
+        # IF statements for validiaton
         if not name:
             raise Error("Please fill in the Customer's Full Name.")
 
@@ -61,10 +62,7 @@ def submit_info():
         tree.insert("", tk.END, values=(index, name, receipt, items, quantity, current_time))
 
         # Clear entry fields after submission
-        name_entry.delete(0, tk.END)
-        receipt_entry.delete(0, tk.END)
-        items_combobox.set('')
-        quantity_entry.delete(0, tk.END)
+        clear_entry_fields()
 
         # Sort the treeview by receipt number
         tree_sort_by_receipt()
@@ -88,6 +86,7 @@ def delete_info():
             tree.delete(selected_item)
             clear_entry_fields()
             update_submission_indices()
+            update_column_numbers()  # Update the column numbers
             return
 
     # If no submission was found with the selected receipt number
@@ -100,12 +99,19 @@ def update_submission_indices():
         submission["Index"] = i + 1
 
 
+# Function to update the column numbers in the treeview
+def update_column_numbers():
+    for i, item in enumerate(tree.get_children()):
+        tree.item(item, values=(i + 1, *tree.item(item, "values")[1:]))
+
+
 # Function that clears all the entries when you click the return button
 def clear_entry_fields():
     name_entry.delete(0, tk.END)
     receipt_entry.delete(0, tk.END)
     items_combobox.set('')
     quantity_entry.delete(0, tk.END)
+
 
 # Validation function for customer name entry
 def validate_name_entry(text):
@@ -114,12 +120,14 @@ def validate_name_entry(text):
         return False
     return True
 
+
 # Validation function for receipt number entry
 def validate_receipt_entry(text):
     if any(char.isalpha() or (not char.isdigit()) for char in text):
         messagebox.showerror("Error", "Only digits are allowed in the Receipt Number.")
         return False
     return True
+
 
 # Validation function for quantity entry
 def validate_quantity_entry(text):
@@ -131,6 +139,15 @@ def validate_quantity_entry(text):
         return False
     return True
 
+
+# Validation function for items hired combobox
+def validate_items_combobox(text):
+    if any(char.isdigit() or (not char.isalnum() and char != " ") for char in text):
+        messagebox.showerror("Error", "Numbers and symbols are not allowed in the Items Hired field.")
+        return False
+    return True
+
+
 # Function to sort the treeview by receipt number
 def tree_sort_by_receipt():
     tree_data = [(tree.item(item)["values"], item) for item in tree.get_children()]
@@ -138,10 +155,47 @@ def tree_sort_by_receipt():
     for i, (values, item) in enumerate(tree_data):
         tree.move(item, "", i)
 
+
+# Function to save the submissions to a file
+def save_submissions():
+    with open("submissions.json", "w") as file:
+        json.dump(submissions, file)
+
+
+# Load submissions from file if it exists
+def load_submissions():
+    try:
+        with open("submissions.json", "r") as file:
+            submissions.extend(json.load(file))
+    except FileNotFoundError:
+        pass
+
+
+# Function to handle the closing event of the window
+def on_closing():
+    save_submissions()
+    window.destroy()
+
+
 # Create the GUI window
 window = tk.Tk()
 window.title("Julies Party Hiring Store")
 window.geometry("1024x700")
+
+# Function that allows the window to close 
+window.protocol("WM_DELETE_WINDOW", on_closing)
+
+# Label for additional information
+additional_info_label = ttk.Label(window, text="Press Enter key to delete returned submission", font=("Helvetica", 10), anchor=tk.E)
+additional_info_label.grid(row=6, column=1, padx=10, pady=5, sticky="se")
+
+# Function to handle Return key press event
+def handle_return_key(event):
+    delete_info()
+
+
+# Return key function
+window.bind('<Return>', handle_return_key)
 
 # Configure a style for ttk widgets
 style = ttk.Style()
@@ -164,8 +218,8 @@ name_entry = ttk.Entry(window, font=("Helvetica", 12))
 receipt_entry = ttk.Entry(window, font=("Helvetica", 12))
 quantity_entry = ttk.Entry(window, font=("Helvetica", 12))
 
-# Combobox for items
-items_combobox = ttk.Combobox(window, font=("Helvetica", 12), state="readonly")
+# Combobox for items hired
+items_combobox = ttk.Combobox(window, font=("Helvetica", 12), state="normal")
 items_combobox['values'] = ('Entertainment', 'Cups', 'Furniture', 'Catering', 'LED products', 'Themes and Accessories')
 items_combobox.current(0)  # Set the default selection
 
@@ -176,6 +230,8 @@ receipt_entry["validate"] = "key"
 receipt_entry["validatecommand"] = (window.register(validate_receipt_entry), "%P")
 quantity_entry["validate"] = "key"
 quantity_entry["validatecommand"] = (window.register(validate_quantity_entry), "%P")
+items_combobox["validate"] = "key"
+items_combobox["validatecommand"] = (window.register(validate_items_combobox), "%P")
 
 # Submit and Delete buttons
 submit_button = ttk.Button(window, text="Submit", command=submit_info)
@@ -208,13 +264,21 @@ items_label.grid(row=4, column=0, padx=10, pady=5, sticky="e")
 items_combobox.grid(row=4, column=1, padx=10, pady=5, sticky="w")
 quantity_label.grid(row=5, column=0, padx=10, pady=5, sticky="e")
 quantity_entry.grid(row=5, column=1, padx=10, pady=5, sticky="w")
-submit_button.grid(row=2, column=0, columnspan=2, pady=10)
-delete_button.grid(row=3, column=0, columnspan=2, pady=5)
+submit_button.grid(row=2, column=1, columnspan=2, pady=10)
+delete_button.grid(row=3, column=1, columnspan=2, pady=10)
 
-# Configure grid weights
+# Set the grid weights for the window and columns
 window.grid_rowconfigure(1, weight=1)
+window.grid_columnconfigure(0, weight=1)
 window.grid_columnconfigure(1, weight=1)
 
+# Load existing submissions from file
+load_submissions()
 
-# Run the GUI
+# Insert existing submissions into the treeview
+for submission in submissions:
+    tree.insert("", tk.END, values=(submission["Index"], submission["Name"], submission["Receipt"], submission["Items"],
+                                   submission["Quantity"], submission["Time"]))
+
+# Starts up the program
 window.mainloop()
